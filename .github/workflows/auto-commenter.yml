@@ -1,0 +1,45 @@
+# When modifying this file, make sure to update on all repositories.  https://github.com/gruntwork-io/git-xargs can help with this.
+
+name: Auto Commenter
+on:
+  issues:
+    types:
+      - labeled
+      - unlabeled
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+
+jobs:
+  add_issue_comment:
+    if: "${{ github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'Roadmap: None' }}"
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - run: gh issue comment "$NUMBER" --body "$BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          BODY: >
+            ROADMAP STATUS UPDATE: Your issue isn't on a roadmap.
+
+            You can view the roadmaps here: [Roadmaps Google Drive folder](https://drive.google.com/drive/folders/1Z6q2GoqnXIslxfcPP0ctVlTAKLi9OzEt).
+
+  add_pull_request_comment:
+    if: "${{ github.event_name == 'pull_request' && github.event.action == 'unlabeled' && github.event.label.name == 'Roadmap: None' }}"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - run: gh pr comment "$NUMBER" --body "$BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.number }}
+          BODY: >
+            ROADMAP STATUS UPDATE: Your pull request isn't on a roadmap.
+
+            You can view the roadmaps here: [Roadmaps Google Drive folder](https://drive.google.com/drive/folders/1Z6q2GoqnXIslxfcPP0ctVlTAKLi9OzEt).
