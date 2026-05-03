@@ -30,7 +30,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      pull-requests: write
     steps:
       - name: add initial pull request comment
         if: "${{ !contains(join(github.event.pull_request.labels.*.name), 'Roadmap:') }}"
